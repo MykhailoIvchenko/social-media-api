@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from .models import User
-from .permissions import IsOwnerOrReadOnly
+from user.permissions import IsOwnerOrReadOnly
 from .serializers import UserProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
