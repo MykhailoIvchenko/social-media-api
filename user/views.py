@@ -8,12 +8,12 @@ from .serializers import UserProfileSerializer
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().prefetch_related('following', 'followers')
     serializer_class = UserProfileSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_queryset(self):
-        queryset = User.objects.all()
+        queryset = User.objects.all().prefetch_related('following', 'followers')
         email = self.request.query_params.get("email", None)
         if email:
             queryset = queryset.filter(email__icontains=email)
@@ -43,13 +43,13 @@ class UserFollowViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def following(self, request):
-        users_following = request.user.following.all()
+        users_following = request.user.following.all().prefetch_related('following', 'followers')
         serializer = UserProfileSerializer(users_following, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def followers(self, request):
-        followers = request.user.followers.all()
+        followers = request.user.followers.all().prefetch_related('following', 'followers')
         serializer = UserProfileSerializer(followers, many=True)
         return Response(serializer.data)
 
