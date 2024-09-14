@@ -21,7 +21,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostDetailsSerializer(PostSerializer):
-    hashtags = HashtagSerializer(many=True, read_only=True)
+    hashtags = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Post
