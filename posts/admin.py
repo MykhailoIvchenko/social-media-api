@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Hashtag, Post
+
+admin.site.register(Hashtag)
+admin.site.register(Post)
