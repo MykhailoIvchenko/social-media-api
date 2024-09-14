@@ -1,10 +1,11 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from .models import User
 from .permissions import IsOwnerOrReadOnly
 from .serializers import UserProfileSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -58,3 +59,19 @@ class UserFollowViewSet(viewsets.ViewSet):
             return User.objects.get(pk=pk)
         except User.DoesNotExist:
             return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class CreateUserView(generics.CreateAPIView):
+    serializer_class = UserProfileSerializer
+
+
+@api_view(['POST'])
+def logout(request):
+    try:
+        refresh_token = request.data.get("refresh", None)
+        if refresh_token:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
