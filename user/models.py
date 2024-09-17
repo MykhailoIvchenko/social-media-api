@@ -54,9 +54,11 @@ def profile_image_file_path(instance, filename):
 class User(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
-    profile_image = models.ImageField(upload_to=profile_image_file_path, blank=True, null=True)
+    profile_image = models.ImageField(upload_to=profile_image_file_path,
+                                      blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
-    following = models.ManyToManyField('self', symmetrical=False, related_name='followers')
+    following = models.ManyToManyField(
+        "self", symmetrical=False, related_name="followers")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

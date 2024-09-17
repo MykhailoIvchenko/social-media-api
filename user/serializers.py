@@ -5,7 +5,7 @@ from rest_framework import serializers
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['id', 'email', 'profile_image', 'bio']
+        fields = ["id", "email", "profile_image", "bio"]
 
 
 class UserFollowSerializer(serializers.ModelSerializer):
@@ -14,4 +14,4 @@ class UserFollowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['id', 'email', 'followers', 'following']
+        fields = ["id", "email", "followers", "following"]

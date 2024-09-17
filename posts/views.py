@@ -6,7 +6,11 @@ from rest_framework.response import Response
 
 from posts.models import Post
 from posts.permissions import IsOwnerOrReadOnly
-from posts.serializers import PostSerializer, PostDetailsSerializer, PostImageSerializer
+from posts.serializers import (
+    PostSerializer,
+    PostDetailsSerializer,
+    PostImageSerializer
+)
 
 
 class PostViewSet(
@@ -31,7 +35,7 @@ class PostViewSet(
         is_following = self.request.query_params.get(
             "is_following", "false").lower() == "true"
         hashtags = self.request.query_params.get("hashtags")
-        
+
         if is_following:
             queryset = Post.objects.filter(user__in=user.following.all())
 
