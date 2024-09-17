@@ -19,3 +19,4 @@ urlpatterns = [
     path("logout/", logout, name="logout"),
     path("", include(router.urls)),
 ]
+
