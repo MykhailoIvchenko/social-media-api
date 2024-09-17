@@ -1,10 +1,12 @@
 from rest_framework import viewsets, status, generics
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.generics import GenericAPIView
+
 from .models import User
 from user.permissions import IsOwnerOrReadOnly
-from .serializers import UserProfileSerializer
+from .serializers import UserProfileSerializer, UserFollowSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -23,6 +25,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 class UserFollowViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
+    serializer_class = UserFollowSerializer
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def follow(self, request, pk=None):
@@ -58,20 +61,24 @@ class UserFollowViewSet(viewsets.ViewSet):
         try:
             return User.objects.get(pk=pk)
         except User.DoesNotExist:
-            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "User not found."},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserProfileSerializer
 
 
-@api_view(['POST'])
-def logout(request):
-    try:
-        refresh_token = request.data.get("refresh", None)
-        if refresh_token:
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-        return Response({"detail": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
-    except Exception as e:
-        return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class LogoutView(GenericAPIView):
+    serializer_class = UserProfileSerializer
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh", None)
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            return Response({"detail": "Successfully logged out."},
+                            status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"detail": str(e)},
+                            status=status.HTTP_400_BAD_REQUEST)
